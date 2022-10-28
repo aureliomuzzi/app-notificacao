@@ -2,7 +2,9 @@ import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import * as Permissions from "expo-permissions";
 import React, { useState, useEffect, useRef } from "react";
-import { Text, View, Button, Platform } from "react-native";
+import { Text, View, Button, Platform } from "react-native-ui-lib";
+
+import Notificacao from './src/pages/Notificacao'
 
 /**
  * Lembrar dos 3 passos:
@@ -23,14 +25,15 @@ Notifications.setNotificationHandler({
   }),
 });
 
+
 /**
  * Componente principal App
  */
 export default function App() {
+  
   /**
    * Estado da aplicação (state)
    */
-  const [expoPushToken, setExpoPushToken] = useState("");
   const [notification, setNotification] = useState(false);
 
   /**
@@ -81,7 +84,9 @@ export default function App() {
         justifyContent: "space-around",
       }}
     >
-      <Text>Your expo push token: {expoPushToken}</Text>
+      <Text green10 text30 style={{ alignItems: "center", justifyContent: "center" }}>
+        Sistema de Notificações
+      </Text>
 
       <View style={{ alignItems: "center", justifyContent: "center" }}>
         <Text>
@@ -95,10 +100,17 @@ export default function App() {
       </View>
 
       <Button
-        title="Press to schedule a notification"
+        label="Enviar Notificação"
+        text50
         onPress={async () => {
           await schedulePushNotification(); //Segundo Passo: lançar a notificação (local)
         }}
+      />
+
+      <Button
+        text50
+        label='Listagem'
+        onPress={() => {this.navigation.push('Notificacao',{})}}
       />
 
     </View>
@@ -112,40 +124,10 @@ async function schedulePushNotification() {
   await Notifications.scheduleNotificationAsync({
     //O que enviar junto com a notificação? título, mensagem (body), etc.
     content: {
-      title: "You've got mail! 📬",
-      body: "Here is the notification body",
-      data: { data: "goes here" },
+      title: "Este é o Título de uma Notificação 📬",
+      body: "E este é o Conteúdo da Notificação",
+      data: { data: "Outros dados aqui." },
     },
-    trigger: { seconds: 2 }, //quanto tempo esperar antes de lançar a notificação?
-  });
-}
-
-/**
- * Passo 2: REMOTO (a notificação é disparada por um agente externo, via Push)
- */
-// Can use this function below, OR use Expo's Push Notification Tool-> https://expo.io/dashboard/notifications
-async function sendPushNotification(expoPushToken) {
-  /**
-   * Isso é o que importa: o que você quer mandar para a notificação? título, mensagem, som, etc.
-   */
-  const message = {
-    to: expoPushToken,
-    sound: "default",
-    title: "Remoto via fetch",
-    body: "And here is the body!",
-    data: { data: "goes here" },
-  };
-
-  /**
-   * Não se preocupe com isso ainda.. vamos aprender sobre APIs na aula sobre REST =)
-   */
-  await fetch("https://exp.host/--/api/v2/push/send", {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Accept-encoding": "gzip, deflate",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(message),
+    trigger: { seconds: 1 }, //quanto tempo esperar antes de lançar a notificação?
   });
 }
