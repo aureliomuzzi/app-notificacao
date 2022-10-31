@@ -4,7 +4,6 @@ import * as Permissions from "expo-permissions";
 import React, { useState, useEffect, useRef } from "react";
 import { Text, View, Button, Platform } from "react-native-ui-lib";
 
-import Notificacao from './src/pages/Notificacao'
 
 /**
  * Lembrar dos 3 passos:
@@ -90,13 +89,9 @@ export default function App() {
 
       <View style={{ alignItems: "center", justifyContent: "center" }}>
         <Text>
-          Title: {notification && notification.request.content.title}{" "}
+          Titulo: {notification && notification.request.content.title}{" "}
         </Text>
-        <Text>Body: {notification && notification.request.content.body}</Text>
-        <Text>
-          Data:{" "}
-          {notification && JSON.stringify(notification.request.content.data)}
-        </Text>
+        <Text>Corpo: {notification && notification.request.content.body}</Text>
       </View>
 
       <Button
@@ -107,12 +102,6 @@ export default function App() {
         }}
       />
 
-      <Button
-        text50
-        label='Listagem'
-        onPress={() => {this.navigation.push('Notificacao',{})}}
-      />
-
     </View>
   );
 }
@@ -121,13 +110,32 @@ export default function App() {
  * Passo 2: LOCAL (o próprio App dispara a notificação)
  */
 async function schedulePushNotification() {
-  await Notifications.scheduleNotificationAsync({
-    //O que enviar junto com a notificação? título, mensagem (body), etc.
-    content: {
-      title: "Este é o Título de uma Notificação 📬",
-      body: "E este é o Conteúdo da Notificação",
-      data: { data: "Outros dados aqui." },
+
+  let dados = [
+    {
+      titulo: "CUPOM",
+      corpo: "Seu Cupom de 50% já está te esperando." 
     },
-    trigger: { seconds: 1 }, //quanto tempo esperar antes de lançar a notificação?
-  });
+    {
+      titulo: "HUMOR",
+      corpo: "Venha para o Lanche do Careca Lindo!"
+    },
+    {
+      titulo: "OFERTA",
+      corpo: "Aproveite as nossas ofertas de Black Friday",
+    }
+  ];
+
+  for (const dado of dados) {
+    await Notifications.scheduleNotificationAsync({
+      //O que enviar junto com a notificação? título, mensagem (body), etc.
+      content: {
+        title: dado.titulo,
+        body: dado.corpo,
+      },
+      trigger: { seconds: 1 }, //quanto tempo esperar antes de lançar a notificação?
+    });
+  }
+
+  
 }
